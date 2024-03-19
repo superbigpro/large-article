@@ -8,7 +8,7 @@ router = APIRouter()
 
 from database.core import *
 from database.user import * 
-from database.application import *
+from app.database.posts import *
 from database.department import *
 
 from tools import *
