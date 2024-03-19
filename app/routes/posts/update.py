@@ -30,11 +30,11 @@ async def submit_apply(data: PostsExample, userid=Depends(RequireAuth), post_id:
         if not post:
             raise HTTPException(status_code=404, detail="해당 게시글이 없습니다.")
 
-        post.title = data.title,
-        post.content = data.content,
-        post.picture = data.picture,
+        post.title = data.title
+        post.content = data.content
+        post.picture = data.picture
         post.last_modified = datetime.now(timezone.utc)
-    
+
         session.add(post)
         await session.commit()
 
