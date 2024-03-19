@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package auth;
+
+service AuthService {
+    rpc Authorize(AuthorizeRequest) returns (AuthorizeResult) {}
+    rpc SendPush(SendPushRequest) returns (SendPushResult) {}
+}
+
+message AuthorizeRequest {
+    string token = 1;
+}
+
+message AuthorizeResult {
+    bool success = 1;
+    optional int64 userid = 2;
+}
+
+message Verification {
+    string type = 1;
+    string department = 2;
+    int32 grade = 3;
+    int32 classroom = 4;
+    int32 number = 5;
+    string valid_until = 6;
+    string graduated_at = 7;
+}
+
+message User {
+    int64 id = 1;
+    string phone = 2;
+    string name = 3;
+    string profile = 5;
+    string created_at = 6;
+    bool is_suspended = 7;
+    optional Verification verification = 8;
+}
+
+message SendPushRequest {
+    optional int64 userid = 1;
+    optional string topic = 2;
+    string title = 3;
+    string body = 4;
+    string image = 5;
+    string link = 6;
+}
+
+message SendPushResult {
+    bool success = 1;
+}
