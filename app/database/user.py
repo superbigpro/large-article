@@ -9,8 +9,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     username = Column(String(50), nullable=False, unique=True)
     password = Column(String(64), nullable=False)
-    school_id = Column(String(30), nullable=False)
     handle_name = Column(String(20), nullable=False)
     role = Column(String(10), nullable=False, default="user")
 
-    application = relationship('Application', back_populates='user')
+    posts = relationship('Posts', back_populates='user')

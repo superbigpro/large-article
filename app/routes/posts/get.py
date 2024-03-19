@@ -1,42 +1,25 @@
-# from fastapi import FastAPI, HTTPException, Header, Response, APIRouter
-# from pydantic import BaseModel, constr
-# from sqlalchemy import func, select
-# from datetime import datetime 
-# import sys
-# import asyncio
+from fastapi import FastAPI, HTTPException, Header, Response, APIRouter, Depends
+from pydantic import BaseModel, constr
+from sqlalchemy import func, select, desc
+from datetime import datetime 
+import sys
+import asyncio
+from depends import RequireAuth
 
-# router = APIRouter()
+router = APIRouter()
 
-# from database.core import *
-# from database.user import * 
-# from app.database.posts import *
+from database.core import *
+from database.user import * 
+from database.posts import *
 
-# from tools import *
-
-# class Application_example(BaseModel):
-#     bio : str 
-#     motive : str 
-#     plan : str 
-#     which_department : str
-
-# @router.get("/api/show_apply", tags=["application"]) # 임시저장 불러오기
-# async def get_apply(token : str = Header(...)):
-#     user = check_auth(token)
+@router.get("/api/get_posts/{cursor_id}", tags=["posts"]) # 게시글 불러오기 
+async def get_apply(userid=Depends(RequireAuth), cursor_id : int = 0):
     
-#     if not user:
-#         return {"ok":"False", "message":"토큰이 올바르지 않습니다."}
+    if not userid:
+        return {"ok":"False", "message":"토큰이 올바르지 않습니다."}
     
-#     async with AsyncSessionLocal() as session:
-#         max_id_subquery = select(
-#         func.max(Application.id).label('max_id')).filter(Application.user_id == user).group_by(
-#             Application.department_id
-#         ).subquery()
+    async with AsyncSessionLocal() as session:
+        res = await session.execute(select(Posts).order_by(desc(Posts.last_modified)))
+        res_result = res.scalars().all()
 
-#         latest_applications_query = select(Application).join(
-#             max_id_subquery, Application.id == max_id_subquery.c.max_id
-#         )
-
-#         result = await session.execute(latest_applications_query)
-#         latest_applications = result.scalars().all()
-
-#     return {"ok":"True", "value":latest_applications}
+    return {"ok":"True", "value":res_result}

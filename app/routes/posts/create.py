@@ -6,7 +6,7 @@ from sqlalchemy.future import select
 from sqlalchemy.sql.expression import desc
 from database.core import AsyncSessionLocal
 from database.user import User
-from app.database.posts import Application
+from database.posts import Posts
 from typing import Optional
 
 router = APIRouter()
@@ -23,9 +23,8 @@ async def submit_apply(data: ApplicationExample, userid=Depends(RequireAuth)):
         raise HTTPException(status_code=401, detail="로그인 후 이용 가능합니다.")
     
     async with AsyncSessionLocal() as session:
-        
-
-        db_value = Application(
+    
+        db_value = Posts(
             title=data.title,
             content=data.content,
             picture=data.picture,
