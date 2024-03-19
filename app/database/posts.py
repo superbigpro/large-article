@@ -15,4 +15,4 @@ class Posts(Base):
     is_modified = Column(Boolean, nullable=False, default=False)
 
     user_id = Column(Integer, ForeignKey('user.id'), nullable=False) 
-    user = relationship('User', back_populates='application')  
+    user = relationship('User', back_populates='posts')  
