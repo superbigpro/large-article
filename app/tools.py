@@ -11,7 +11,7 @@ DAY = 86400
 SECRET = os.environ.get("SECRET")
 salt = os.environ.get("SALT")
 
-def encToken(user_id):
+async def encToken(user_id):
   end = int(time.time()) + DAY
   info = {
     "id": user_id,
@@ -22,7 +22,7 @@ def encToken(user_id):
   token = jwt.encode(info, SECRET, algorithm="HS256")
   return token
 
-def admin_Token(user_id):
+async def admin_Token(user_id):
   end = int(time.time()) + DAY
   info = {
     "id": user_id,
@@ -33,7 +33,7 @@ def admin_Token(user_id):
   token = jwt.encode(info, SECRET, algorithm="HS256")
   return token
 
-def check_auth(token):
+async def check_auth(token):
   unix_time = int(time.time())
   try:
     info = jwt.decode(token, SECRET, algorithms="HS256")
@@ -44,7 +44,7 @@ def check_auth(token):
   except:
     return False
   
-def admin_check_auth(token):
+async def admin_check_auth(token):
   unix_time = int(time.time())
   try:
     info = jwt.decode(token, SECRET, algorithms="HS256")
@@ -55,5 +55,5 @@ def admin_check_auth(token):
   except:
     return False
 
-def hashing_pw(plain_pw):
+async def hashing_pw(plain_pw):
   return hashlib.sha256((plain_pw + salt).encode('utf-8')).hexdigest()
