@@ -16,7 +16,7 @@ class PostsExample(BaseModel):
     title: Optional[str] = None
     picture: Optional[bytes] = None
 
-@router.put("/api/update/{post_id}", tags=["update posts"])
+@router.post("/api/update/{post_id}", tags=["update posts"])
 async def submit_apply(data: PostsExample, userid=Depends(RequireAuth), post_id: int = 0):
     
     if not userid:
