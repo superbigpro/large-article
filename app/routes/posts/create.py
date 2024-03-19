@@ -16,7 +16,7 @@ class ApplicationExample(BaseModel):
     title: str
     picture: Optional[bytes] = None
 
-@router.post("/api/application", tags=["application"])
+@router.post("/api/create", tags=["create posts"])
 async def submit_apply(data: ApplicationExample, userid=Depends(RequireAuth)):
     
     if not userid:

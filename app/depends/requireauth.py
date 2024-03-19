@@ -2,6 +2,7 @@ from fastapi import Header
 from rpc import auth
 from fastapi.exceptions import HTTPException
 from grpc.aio._call import AioRpcError
+from tools import check_auth
 
 
 async def RequireAuth(authorization: str = Header(...)):
@@ -12,7 +13,7 @@ async def RequireAuth(authorization: str = Header(...)):
         if token_type != "Bearer":
             raise
 
-        userid = await auth.authorize(token)
+        userid = await check_auth(token)
         if not userid:
             raise
         return userid

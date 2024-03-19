@@ -40,4 +40,4 @@ async def register(data: Register_example):
         session.add(db_user)  
         await session.commit()
 
-    return {"ok": True}
+        return {"ok": True}
