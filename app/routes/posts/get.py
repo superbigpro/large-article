@@ -12,14 +12,27 @@ from database.core import *
 from database.user import * 
 from database.posts import *
 
-@router.get("/api/get_posts/{cursor_id}", tags=["posts"]) # 게시글 불러오기 
-async def get_apply(userid=Depends(RequireAuth), cursor_id : int = 0):
-    
+from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy.future import select
+from sqlalchemy import desc
+
+router = APIRouter()
+
+@router.get("/api/get_posts/{cursor_id}", tags=["posts"])  # 게시글 불러오기
+async def get_posts(cursor_id: int = 0, userid=Depends(RequireAuth)):
     if not userid:
-        return {"ok":"False", "message":"토큰이 올바르지 않습니다."}
+        raise HTTPException(status_code=400, detail="토큰이 올바르지 않습니다.")
     
     async with AsyncSessionLocal() as session:
-        res = await session.execute(select(Posts).order_by(desc(Posts.last_modified)))
-        res_result = res.scalars().all()
+        query = select(Posts).where(Posts.id > cursor_id).order_by(Posts.id).limit(10)  
+        res = await session.execute(query)
+        posts = res.scalars().all()
 
-    return {"ok":"True", "value":res_result}
+        next_cursor_id = posts[-1].id if posts else None
+
+        return {
+            "ok": "True",
+            "posts": [post.to_dict() for post in posts],  
+            "next_cursor_id": next_cursor_id
+        }
+
