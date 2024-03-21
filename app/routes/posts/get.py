@@ -30,9 +30,15 @@ async def get_posts(cursor_id: int = 0, userid=Depends(RequireAuth)):
 
         next_cursor_id = posts[-1].id if posts else None
 
+        posts_data = [{
+            "title": post.title,
+            "author": post.author,
+            "created_at": post.created_at
+        } for post in posts]
+
         return {
             "ok": "True",
-            "posts": [post.to_dict() for post in posts],  
+            "posts": posts_data,  
             "next_cursor_id": next_cursor_id
         }
 
