@@ -24,7 +24,12 @@ async def submit_apply(data: ApplicationExample,
     async with AsyncSessionLocal() as session:
         post = await session.execute(select(Comments.id == comment_id, Comments.post_id == post_id).where())
         post_info = post.scalars().first()
-
+        
+        if post_info:
+            post_info.content = data.content
+            post_info.last_modified = datetime.now(timezone.utc)
+            post_info.is_modified = True
+            
         session.add(post_info)
         await session.commit()
 
