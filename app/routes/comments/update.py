@@ -29,6 +29,8 @@ async def submit_apply(data: ApplicationExample,
             post_info.content = data.content
             post_info.last_modified = datetime.now(timezone.utc)
             post_info.is_modified = True
+        else:
+            raise HTTPException(status_code=404, detail="해당 댓글이 없습니다.")
             
         session.add(post_info)
         await session.commit()
