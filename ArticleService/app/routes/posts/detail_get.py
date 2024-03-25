@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Header, Response, APIRouter, Depends
 from pydantic import BaseModel, constr
-from sqlalchemy import select, joinedload
+from sqlalchemy import select
 from datetime import datetime 
 from depends import RequireAuth
 

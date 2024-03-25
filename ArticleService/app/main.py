@@ -8,11 +8,6 @@ app = FastAPI()
 
 from tools import check_auth  
 
-from routes.posts import *
-from routes.user import *
-
-from routes.user import router as user_router
-from routes.posts import router as posts_router
 
 async def create_tables():
     async with async_engine.begin() as conn:

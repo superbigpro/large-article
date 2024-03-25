@@ -8,8 +8,7 @@ router = APIRouter()
 
 from database.core import *
 from database.user import * 
-from database.posts import *
-from tools import * 
+from AuthService.app.tools import * 
 
 class Register_example(BaseModel):
     username: str

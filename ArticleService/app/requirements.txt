@@ -22,13 +22,14 @@ h11==0.14.0
 idna==3.6
 jwt==1.3.1
 multidict==6.0.4
+pip==24.0
 protobuf==4.25.3
 pycparser==2.21
 pydantic==2.5.3
 pydantic_core==2.14.6
 PyJWT==2.8.0
 PyMySQL==1.1.0
-python-dotenv @ git+https://github.com/theskumar/python-dotenv.git@d6c0b9638349a7dd605d60ee555ff60421c1a594
+python-dotenv==1.0.1
 requests==2.31.0
 setuptools==69.1.1
 sniffio==1.3.0
