@@ -8,6 +8,7 @@ services:
       - AUTH_PORT=50001
       - AUTH_HOST=auth_service
       - DB_HOST=db
+      - PYTHONPATH=AuthService/app
     networks:
       - grpc_network
 
@@ -20,6 +21,7 @@ services:
       - AUTH_HOST=auth_service
       - AUTH_PORT=50001
       - DB_HOST=db
+      - PYTHONPATH=ArticleService/app
     networks:
       - grpc_network
     depends_on:
@@ -29,10 +31,10 @@ services:
   db:
     image: mysql:latest
     environment:
-      - MYSQL_DATABASE=${MYSQL_DATABASE}
-      - MYSQL_USER=${MYSQL_USER}
-      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} # MySQL에서는 루트 비밀번호 설정이 필요
+      - MYSQL_DATABASE=article
+      # - MYSQL_USER=root
+      # - MYSQL_PASSWORD=123456
+      - MYSQL_ROOT_PASSWORD=123456 # MySQL에서는 루트 비밀번호 설정이 필요
     volumes:
       - db-data:/var/lib/mysql
     networks:
