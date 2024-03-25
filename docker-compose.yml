@@ -1,0 +1,45 @@
+version: '3'
+services:
+  auth_service:
+    build: ./AuthService/app
+    ports:
+      - "50001:50001"
+    environment:
+      - AUTH_PORT=50001
+      - AUTH_HOST=auth_service
+      - DB_HOST=db
+    networks:
+      - grpc_network
+
+  article_service:
+    build: ./ArticleService/app
+    ports:
+      - "50002:50002"
+    environment:
+      - ARTICLE_PORT=50002
+      - AUTH_HOST=auth_service
+      - AUTH_PORT=50001
+      - DB_HOST=db
+    networks:
+      - grpc_network
+    depends_on:
+      - auth_service
+      - db
+
+  db:
+    image: postgres:latest
+    environment:
+      - POSTGRES_DB=yourdbname
+      - POSTGRES_USER=yourdbuser
+      - POSTGRES_PASSWORD=yourdbpassword
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - grpc_network
+
+networks:
+  grpc_network:
+    driver: bridge
+
+volumes:
+  db-data:
