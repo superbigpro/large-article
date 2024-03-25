@@ -13,6 +13,7 @@ from database.posts import *
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.future import select
 from sqlalchemy import desc
+from sqlalchemy.orm import joinedload
 
 router = APIRouter()
 
