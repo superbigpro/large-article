@@ -27,15 +27,17 @@ services:
       - db
 
   db:
-    image: postgres:latest
+    image: mysql:latest
     environment:
-      - POSTGRES_DB=yourdbname
-      - POSTGRES_USER=yourdbuser
-      - POSTGRES_PASSWORD=yourdbpassword
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+      - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD} # MySQL에서는 루트 비밀번호 설정이 필요
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - db-data:/var/lib/mysql
     networks:
       - grpc_network
+    command: --default-authentication-plugin=mysql_native_password # 이 옵션은 필요에 따라 추가
 
 networks:
   grpc_network:
