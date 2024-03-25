@@ -1,8 +1,11 @@
-from ..client import generate_client
-from ..declaration.auth_pb2 import AuthorizeRequest
+from tools import check_auth
+from rpc.auth.declaration.auth_pb2 import (
+    AuthorizeResult,
+)
 
-async def authorize(token: str) -> int:
-    client = await generate_client()
-
-    response = await client.Authorize(AuthorizeRequest(token=token))
-    return response.userid if response.userid else None
+async def AuthorizeInterface(self, request, context):
+    result = await check_auth(request.token)
+    if result:
+        return AuthorizeResult(success=True, userid=result)
+    else:
+        return AuthorizeResult(success=False)
