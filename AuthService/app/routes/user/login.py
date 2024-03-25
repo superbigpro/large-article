@@ -9,7 +9,7 @@ router = APIRouter()
 from database.core import *
 from database.user import * 
 
-from AuthService.app.tools import *
+from tools import encToken, hashing_pw
 
 class Login_example(BaseModel):
     username: str

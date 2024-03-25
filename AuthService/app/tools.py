@@ -34,7 +34,7 @@ async def admin_Token(user_id):
   token = jwt.encode(info, SECRET, algorithm="HS256")
   return token
 
-async def authorize(token: str) -> int | None:
+async def check_auth(token: str): # -> int | None:
   try:
     user_id = int(base64.b64decode(token.split(".")[0]).decode())
   except:

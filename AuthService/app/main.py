@@ -6,7 +6,7 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 
 app = FastAPI()
 
-from AuthService.app.tools import check_auth  
+from tools import check_auth  
 
 
 async def create_tables():

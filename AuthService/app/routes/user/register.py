@@ -8,7 +8,7 @@ router = APIRouter()
 
 from database.core import *
 from database.user import * 
-from AuthService.app.tools import * 
+from tools import hashing_pw
 
 class Register_example(BaseModel):
     username: str
