@@ -31,7 +31,7 @@ services:
   db:
     image: mysql:latest
     environment:
-      - MYSQL_DATABASE=article
+      - MYSQL_DATABASE=rpcarticle-db-1
       # - MYSQL_USER=root
       # - MYSQL_PASSWORD=123456
       - MYSQL_ROOT_PASSWORD=123456 # MySQL에서는 루트 비밀번호 설정이 필요
