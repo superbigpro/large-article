@@ -4,12 +4,13 @@ import time
 from datetime import datetime, timedelta
 import hashlib
 from dotenv import load_dotenv
+import base64
 load_dotenv()
 
 DAY = 86400
 
 SECRET = os.environ.get("SECRET")
-salt = os.environ.get("SALT")
+SALT = os.environ.get("SALT")
 
 async def encToken(user_id):
   end = int(time.time()) + DAY
@@ -33,17 +34,14 @@ async def admin_Token(user_id):
   token = jwt.encode(info, SECRET, algorithm="HS256")
   return token
 
-async def check_auth(token):
-  unix_time = int(time.time())
+async def authorize(token: str) -> int | None:
   try:
-    info = jwt.decode(token, SECRET, algorithms="HS256")
-    if info["type"] == "auth" and info["end"] > unix_time:
-      return info["id"]
-    else:
-      return False
+    user_id = int(base64.b64decode(token.split(".")[0]).decode())
   except:
-    return False
-  
+    return None
+
+  return user_id if not token else None
+
 async def admin_check_auth(token):
   unix_time = int(time.time())
   try:
@@ -56,4 +54,4 @@ async def admin_check_auth(token):
     return False
 
 async def hashing_pw(plain_pw):
-  return hashlib.sha256((plain_pw + salt).encode('utf-8')).hexdigest()
+  return hashlib.sha256((plain_pw + SALT).encode('utf-8')).hexdigest()
