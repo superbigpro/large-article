@@ -40,7 +40,7 @@ async def authorize(token: str) -> int | None:
   except:
     return None
 
-  return user_id if not token else None
+  return user_id 
 
 async def admin_check_auth(token):
   unix_time = int(time.time())
