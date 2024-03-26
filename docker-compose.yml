@@ -37,6 +37,8 @@ services:
       - MYSQL_ROOT_PASSWORD=123456 # MySQL에서는 루트 비밀번호 설정이 필요
     volumes:
       - db-data:/var/lib/mysql
+    ports:
+      - "5000:3306" # 호스트의 5000 포트를 컨테이너의 3306 포트에 연결
     networks:
       - grpc_network
     command: --default-authentication-plugin=mysql_native_password # 이 옵션은 필요에 따라 추가

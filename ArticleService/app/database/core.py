@@ -12,7 +12,7 @@ MYSQL_PASSWORD = os.environ.get('MYSQL_PASSWORD')
 if not MYSQL_PASSWORD:
     raise ValueError("mysql password 환경변수를 찾을 수 없습니다.")
 
-SQLALCHEMY_DATABASE_URL = f"mysql+aiomysql://root:{MYSQL_PASSWORD}@host.docker.internal:3306/rpcarticle-db-1"
+SQLALCHEMY_DATABASE_URL = f"mysql+aiomysql://root:123456@db:3306/rpcarticle-db-1"
 
 async_engine = create_async_engine(SQLALCHEMY_DATABASE_URL)
 
