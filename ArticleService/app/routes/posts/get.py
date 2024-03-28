@@ -9,7 +9,7 @@ from depends import RequireAuth
 router = APIRouter()
 
 from database.core import *
-from database.user import * 
+# from database.user import * 
 from database.posts import *
 
 from fastapi import APIRouter, Depends, HTTPException
