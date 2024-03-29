@@ -5,7 +5,7 @@ from depends import RequireAuth
 from sqlalchemy.future import select 
 from sqlalchemy.sql.expression import desc
 from database.core import AsyncSessionLocal
-from database.user import User
+# from database.user import User
 from database.posts import Posts
 from typing import Optional
 
