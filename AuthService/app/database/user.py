@@ -11,5 +11,3 @@ class User(Base):
     password = Column(String(64), nullable=False)
     handle_name = Column(String(20), nullable=False)
     role = Column(String(10), nullable=False, default="user")
-
-    posts = relationship('Posts', back_populates='user')
