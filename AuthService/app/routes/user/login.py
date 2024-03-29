@@ -19,7 +19,7 @@ class Login_example(BaseModel):
 @router.post("/api/login", tags=["login"])
 async def login(data: Login_example):
     pw = data.password
-    hashed_pw = hashing_pw(pw)
+    hashed_pw = await hashing_pw(pw)
     
     async with AsyncSessionLocal() as session:
         user = await session.execute(select(User).filter(User.username == data.username, User.password == hashed_pw))

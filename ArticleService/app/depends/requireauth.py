@@ -1,5 +1,5 @@
 from fastapi import Header
-from ArticleService.app.rpc.auth.services import authorize
+from rpc.auth.services import authorize
 from rpc import auth
 from fastapi.exceptions import HTTPException
 from grpc import AioRpcError
