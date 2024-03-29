@@ -18,15 +18,14 @@ class Login_example(BaseModel):
 
 @router.post("/api/login", tags=["login"])
 async def login(data: Login_example):
-    pw = data.password
-    hashed_pw = await hashing_pw(pw)
+    hashed_pw = hashing_pw(data.password)
     
     async with AsyncSessionLocal() as session:
         user = await session.execute(select(User).filter(User.username == data.username, User.password == hashed_pw))
-        user = user.scalars().first()
+        user_info = user.scalars().first()
 
-        if not user:
+        if not user_info:
             raise HTTPException(status_code=400, detail="아이디 혹은 비밀번호가 다릅니다.")
         
-        token = encToken(user.id)
+        token = encToken(user_info.id)
     return {"ok": True, "token": token}

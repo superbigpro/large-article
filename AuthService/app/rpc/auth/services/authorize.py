@@ -4,7 +4,7 @@ from rpc.auth.declaration.auth_pb2 import (
 )
 
 async def AuthorizeInterface(self, request, context):
-    result = await check_auth(request.token)
+    result = check_auth(request.token)
     if result:
         return AuthorizeResult(success=True, userid=result)
     else:
