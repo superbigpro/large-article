@@ -5,7 +5,7 @@ import grpc
 import auth_pb2 as auth__pb2
 
 
-class AuthServiceStub(object):
+class AuthServiceV2Stub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -15,23 +15,23 @@ class AuthServiceStub(object):
             channel: A grpc.Channel.
         """
         self.Authorize = channel.unary_unary(
-                '/auth.AuthService/Authorize',
+                '/auths.AuthServiceV2/Authorize',
                 request_serializer=auth__pb2.AuthorizeRequest.SerializeToString,
                 response_deserializer=auth__pb2.AuthorizeResult.FromString,
                 )
         self.GetUser = channel.unary_unary(
-                '/auth.AuthService/GetUser',
+                '/auths.AuthServiceV2/GetUser',
                 request_serializer=auth__pb2.GetUserRequest.SerializeToString,
                 response_deserializer=auth__pb2.GetUserResult.FromString,
                 )
         self.SendPush = channel.unary_unary(
-                '/auth.AuthService/SendPush',
+                '/auths.AuthServiceV2/SendPush',
                 request_serializer=auth__pb2.SendPushRequest.SerializeToString,
                 response_deserializer=auth__pb2.SendPushResult.FromString,
                 )
 
 
-class AuthServiceServicer(object):
+class AuthServiceV2Servicer(object):
     """Missing associated documentation comment in .proto file."""
 
     def Authorize(self, request, context):
@@ -53,7 +53,7 @@ class AuthServiceServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_AuthServiceServicer_to_server(servicer, server):
+def add_AuthServiceV2Servicer_to_server(servicer, server):
     rpc_method_handlers = {
             'Authorize': grpc.unary_unary_rpc_method_handler(
                     servicer.Authorize,
@@ -72,12 +72,12 @@ def add_AuthServiceServicer_to_server(servicer, server):
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'auth.AuthService', rpc_method_handlers)
+            'auths.AuthServiceV2', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
 
 
  # This class is part of an EXPERIMENTAL API.
-class AuthService(object):
+class AuthServiceV2(object):
     """Missing associated documentation comment in .proto file."""
 
     @staticmethod
@@ -91,7 +91,7 @@ class AuthService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/auth.AuthService/Authorize',
+        return grpc.experimental.unary_unary(request, target, '/auths.AuthServiceV2/Authorize',
             auth__pb2.AuthorizeRequest.SerializeToString,
             auth__pb2.AuthorizeResult.FromString,
             options, channel_credentials,
@@ -108,7 +108,7 @@ class AuthService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/auth.AuthService/GetUser',
+        return grpc.experimental.unary_unary(request, target, '/auths.AuthServiceV2/GetUser',
             auth__pb2.GetUserRequest.SerializeToString,
             auth__pb2.GetUserResult.FromString,
             options, channel_credentials,
@@ -125,7 +125,7 @@ class AuthService(object):
             wait_for_ready=None,
             timeout=None,
             metadata=None):
-        return grpc.experimental.unary_unary(request, target, '/auth.AuthService/SendPush',
+        return grpc.experimental.unary_unary(request, target, '/auths.AuthServiceV2/SendPush',
             auth__pb2.SendPushRequest.SerializeToString,
             auth__pb2.SendPushResult.FromString,
             options, channel_credentials,

@@ -1,0 +1,79 @@
+syntax = "proto3";
+
+package auths;
+
+service AuthServiceV2 {
+    rpc Authorize(AuthorizeRequest) returns (AuthorizeResult) {}
+    rpc GetUser(GetUserRequest) returns (GetUserResult) {}
+    rpc SendPush(SendPushRequest) returns (SendPushResult) {}
+}
+
+message ValidateResult {
+    bool success = 1;
+}
+
+message AuthorizeRequest {
+    string token = 1;
+}
+
+message AuthorizeResult {
+    bool success = 1;
+    optional uint64 userid = 2;
+}
+
+
+message GetUserRequest {
+    uint64 userid = 1;
+}
+
+message Verification {
+    string type = 1;
+    string department = 2;
+    int32 grade = 3;
+    int32 classroom = 4;
+    int32 number = 5;
+    string valid_until = 6;
+    optional string graduated_at = 7;
+}
+message User {
+    uint64 id = 1;
+    string phone = 2;
+    string name = 3;
+    string profile = 5;
+    string created_at = 6;
+    bool is_suspended = 7;
+    
+    
+    optional Verification verification = 8;
+}
+
+message SearchUserRequest {
+    string query = 1;
+    int32 offset = 2;
+    int32 limit = 3;
+}
+
+message SearchUserResult {
+    repeated User users = 1;
+}
+
+message GetUserResult {
+    bool success = 1;
+    optional User user = 2;
+} 
+
+message SendPushRequest {
+    oneof target {
+        uint64 userid = 1;
+        string topic = 2;
+    }
+    bool saveinList = 3;
+    optional string title = 4;
+    optional string body = 5;
+    optional string image = 6;
+    optional string link = 7;
+}
+
+message SendPushResult {
+    bool success = 1;
+}

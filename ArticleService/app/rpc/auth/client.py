@@ -1,5 +1,5 @@
 import grpc
-from .declaration.auth_pb2_grpc import AuthServiceStub
+from .declaration.auth.auth_pb2_grpc import AuthServiceStub
 from dotenv import load_dotenv
 import os
 
