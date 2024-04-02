@@ -1,7 +1,7 @@
 from .authorize import authorize
 from .getuser import get_user
 
-from rpc.auth.declaration import auth_pb2_grpc
+from rpc.auth.declaration.auth import auth_pb2_grpc
 from .authorize import AuthorizeInterface
 from .getuser import GetUserInterface
 

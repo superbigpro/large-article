@@ -10,7 +10,7 @@ GRPC_PORT = os.getenv("GRPC_PORT")
 
 class gRPCServer:
     @staticmethod
-    async def run():
+    async def run():                                                                                    
         server = aio.server()
 
         auth_pb2_grpc.add_AuthServiceServicer_to_server(AuthorizeServicer(), server)

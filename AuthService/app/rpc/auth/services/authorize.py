@@ -1,5 +1,5 @@
 from tools import check_auth
-from rpc.auth.declaration.auth_pb2 import (
+from rpc.auth.declaration.auth.auth_pb2 import (
     AuthorizeResult,
 )
 
