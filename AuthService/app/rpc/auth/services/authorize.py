@@ -1,4 +1,5 @@
 from tools import check_auth
+from ..client import generate_client
 from rpc.auth.declaration.auth.auth_pb2 import (
     AuthorizeResult,
 )

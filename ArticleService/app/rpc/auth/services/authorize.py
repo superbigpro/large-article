@@ -1,5 +1,5 @@
 from ..client import generate_client
-from rpc.auth.declaration.auth.auth_pb2 import AuthorizeRequest
+from rpc.auth.declaration.auth_pb2 import AuthorizeRequest
 
 async def authorize(token: str) -> int:
     client = await generate_client()

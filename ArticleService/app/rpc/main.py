@@ -1,5 +1,5 @@
 from grpc import aio
-from rpc.auth.declaration.auth import auth_pb2_grpc
+from rpc.auth.declaration import auth_pb2_grpc
 from rpc.auth.services import AuthorizeServicer
 
 

@@ -1,5 +1,5 @@
 import grpc
-from rpc.auth.declaration.auth.auth_pb2_grpc import AuthServiceV2Stub
+from rpc.auth.declaration.auth_pb2_grpc import AuthServiceStub
 from dotenv import load_dotenv
 import os
 
@@ -15,7 +15,7 @@ async def generate_client():
         return STORED_CLIENT
 
     channel = grpc.aio.insecure_channel(f"{AUTH_HOST}:{AUTH_PORT}")
-    client = AuthServiceV2Stub(channel)
+    client = AuthServiceStub(channel)
 
     STORED_CLIENT = client
     return client
