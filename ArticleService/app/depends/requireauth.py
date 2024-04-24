@@ -2,8 +2,7 @@ from fastapi import Header
 from rpc.auth.services import authorize
 from rpc import auth
 from fastapi.exceptions import HTTPException
-from grpc import AioRpcError
-# from tools import check_auth
+from grpc.experimental.aio import AioRpcError
 
 
 async def RequireAuth(authorization: str = Header(...)):

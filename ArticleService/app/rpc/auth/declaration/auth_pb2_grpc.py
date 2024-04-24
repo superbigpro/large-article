@@ -2,8 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-import auth_pb2 as auth__pb2
-
+from . import auth_pb2 as auth__pb2
 
 class AuthServiceStub(object):
     """Missing associated documentation comment in .proto file."""
