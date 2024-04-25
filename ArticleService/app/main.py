@@ -1,8 +1,6 @@
-from fastapi import FastAPI, Header
-from pathlib import Path
+from fastapi import FastAPI
 from database.core import async_engine, Base  
-from routes import include_router
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession  
+from routes import include_router 
 
 app = FastAPI()
 
