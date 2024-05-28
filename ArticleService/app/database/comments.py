@@ -1,4 +1,4 @@
-from sqlalchemy import BLOB, Column, Integer, String, DateTime, ForeignKey, Boolean
+from sqlalchemy import BLOB, Column, Integer, String, DateTime, ForeignKey, Boolean, BigInteger
 from sqlalchemy.orm import relationship
 from datetime import datetime, timezone
 from sqlalchemy.ext.declarative import declarative_base
@@ -15,5 +15,4 @@ class Comments(Base):
     post_id = Column(String, ForeignKey('posts.id'), nullable=False)
     post = relationship('Posts', back_populates='comments')
 
-    user_id = Column(Integer, ForeignKey('user.id'), nullable=False) 
-    user = relationship('User', back_populates='posts')  
+    user_id = Column(BigInteger, nullable=False) 
