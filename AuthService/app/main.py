@@ -3,6 +3,8 @@ from pathlib import Path
 from database.core import async_engine, Base  
 from routes import include_router
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession  
+from rpc import gRPCServer
+import asyncio
 
 app = FastAPI()
 
@@ -22,5 +24,12 @@ async def authcheck(token : str = Header(...)):
         return {"ok": "False"}
     
     return {"received_token": token}
+
+async def main():
+    await create_tables()
+    await gRPCServer.run()
+
+if __name__ == "__main__":
+    asyncio.run(main())
 
 include_router(app)
