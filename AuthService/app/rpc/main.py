@@ -6,7 +6,7 @@ import os
 
 dotenv.load_dotenv()
 
-GRPC_PORT = os.getenv("GRPC_PORT")
+AUTH_PORT = os.getenv("AUTH_PORT", "50001")
 
 class gRPCServer:
     @staticmethod
@@ -15,7 +15,7 @@ class gRPCServer:
 
         auth_pb2_grpc.add_AuthServiceServicer_to_server(AuthorizeServicer(), server)
 
-        server.add_insecure_port(f"[::]:{GRPC_PORT}")
+        server.add_insecure_port(f"[::]:{AUTH_PORT}")
         await server.start()
-        print("[GRPC] Server is running on port", GRPC_PORT)
+        print("[GRPC] Server is running on port", AUTH_PORT)
         await server.wait_for_termination()
