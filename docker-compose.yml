@@ -21,12 +21,15 @@ services:
       - AUTH_HOST=auth_service
       - AUTH_PORT=50001
       - DB_HOST=db
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
       - PYTHONPATH=ArticleService/app
     networks:
       - grpc_network
     depends_on:
       - auth_service
       - db
+      - redis
 
   db:
     image: mysql:latest
@@ -38,9 +41,20 @@ services:
       - grpc_network
     command: --default-authentication-plugin=mysql_native_password
 
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - grpc_network
+    command: redis-server --appendonly yes
+
 networks:
   grpc_network:
     driver: bridge
 
 volumes:
   db-data:
+  redis-data:
