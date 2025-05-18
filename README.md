@@ -104,13 +104,6 @@ cp ArticleService/protos/article.proto loadtests/
 ./k6 run loadtests/grpc_article_test.js
 ```
 
-## 아키텍처 최적화 사항
-
-- 대용량 Redis 키 조회를 위한 SCAN 기반 최적화
-- 파이프라인을 사용한 일괄 데이터 처리
-- 분산 부하 테스트로 서비스 확장성 검증
-- 백엔드 서비스 간 효율적인 통신을 위한 gRPC 활용
-
 ## 개발 환경 설정
 
 각 서비스 디렉토리에는 `requirements.txt` 파일이 있으며, 다음 명령으로 설치할 수 있습니다:
