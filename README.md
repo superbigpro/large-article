@@ -6,7 +6,6 @@ gRPC 기반의 마이크로서비스 아키텍처를 사용한 아티클 시스�
 
 - **ArticleService**: 게시글 CRUD 및 통계 관리(조회수, 좋아요)
 - **AuthService**: 사용자 인증 및 토큰 관리
-- **DashboardService**: 시스템 메트릭 모니터링 및 통계
 
 ## 기술 스택
 
