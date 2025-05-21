@@ -6,7 +6,6 @@ gRPC 기반의 마이크로서비스 아키텍처를 사용한 아티클 시스�
 
 - **ArticleService**: 게시글 CRUD 및 통계 관리(조회수, 좋아요)
 - **AuthService**: 사용자 인증 및 토큰 관리
-- **DashboardService**: 시스템 메트릭 모니터링 및 통계
 
 ## 기술 스택
 
@@ -103,13 +102,6 @@ gRPC 직접 테스트:
 cp ArticleService/protos/article.proto loadtests/
 ./k6 run loadtests/grpc_article_test.js
 ```
-
-## 아키텍처 최적화 사항
-
-- 대용량 Redis 키 조회를 위한 SCAN 기반 최적화
-- 파이프라인을 사용한 일괄 데이터 처리
-- 분산 부하 테스트로 서비스 확장성 검증
-- 백엔드 서비스 간 효율적인 통신을 위한 gRPC 활용
 
 ## 개발 환경 설정
 
