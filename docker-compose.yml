@@ -4,18 +4,24 @@ services:
     build: ./AuthService/app
     ports:
       - "50001:50001"
+      - "50101:50101"
     environment:
       - AUTH_PORT=50001
       - AUTH_HOST=auth_service
       - DB_HOST=db
       - PYTHONPATH=/app
+      - SERVER_TYPE=BOTH
+      - GRPC_PORT=50101
     networks:
       - grpc_network
+    depends_on:
+      - db
 
   article_service:
     build: ./ArticleService/app
     ports:
       - "50002:50002"
+      - "50102:50102"
     environment:
       - ARTICLE_PORT=50002
       - AUTH_HOST=auth_service
@@ -24,6 +30,9 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - PYTHONPATH=/app
+      - SERVER_TYPE=BOTH
+      - GRPC_PORT=50102
+      - AUTH_GRPC_PORT=50101
     networks:
       - grpc_network
     depends_on:
