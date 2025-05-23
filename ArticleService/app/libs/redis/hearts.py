@@ -9,7 +9,7 @@ import time
 from collections import defaultdict
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-import aioredis
+import redis.asyncio as redis  
 from .client import get_redis_client, HEARTS_PREFIX, REDIS_KEY_TTL
 
 logger = logging.getLogger("redis_hearts")
@@ -35,18 +35,18 @@ async def increment_hearts(post_id: int) -> int:
     
     try:
         # Redis 클라이언트 가져오기
-        redis = await get_redis_client()
-        if redis is None:
+        redis_client = await get_redis_client()
+        if redis_client is None:
             # Redis 연결 실패 시 로컬 메모리에 백로그 추가
             logger.warning(f"Redis 연결 실패: post_id={post_id} 좋아요 증가 요청을 백로그에 추가합니다.")
             return await _add_to_backlog(post_id, 1)
         
         # 좋아요 수 증가 및 조회
-        current_hearts = await redis.incr(key)
+        current_hearts = await redis_client.incr(key)
         
         # TTL 설정 (키가 존재하지 않았을 때만)
         if current_hearts == 1:
-            await redis.expire(key, REDIS_KEY_TTL)
+            await redis_client.expire(key, REDIS_KEY_TTL)
         
         # 백로그 처리 시도 (주기적으로)
         if time.time() - _last_flush_time > _FLUSH_INTERVAL:
@@ -54,7 +54,7 @@ async def increment_hearts(post_id: int) -> int:
             
         return current_hearts
     
-    except aioredis.RedisError as e:
+    except redis.RedisError as e:
         logger.error(f"Redis 오류 (좋아요 증가): {str(e)}, post_id={post_id}")
         # Redis 실패 시 백로그에 추가
         return await _add_to_backlog(post_id, 1)
@@ -77,18 +77,18 @@ async def decrement_hearts(post_id: int) -> int:
     
     try:
         # Redis 클라이언트 가져오기
-        redis = await get_redis_client()
-        if redis is None:
+        redis_client = await get_redis_client()
+        if redis_client is None:
             # Redis 연결 실패 시 로컬 메모리에 백로그 추가
             logger.warning(f"Redis 연결 실패: post_id={post_id} 좋아요 감소 요청을 백로그에 추가합니다.")
             return await _add_to_backlog(post_id, -1)
         
         # 현재 좋아요 수 조회
-        current_hearts = await redis.get(key)
+        current_hearts = await redis_client.get(key)
         
         if current_hearts and int(current_hearts) > 0:
             # 좋아요 수 감소 및 조회
-            new_hearts = await redis.decr(key)
+            new_hearts = await redis_client.decr(key)
             
             # 백로그 처리 시도 (주기적으로)
             if time.time() - _last_flush_time > _FLUSH_INTERVAL:
@@ -97,10 +97,10 @@ async def decrement_hearts(post_id: int) -> int:
             return new_hearts
         else:
             # 좋아요가 없거나 0인 경우 0으로 설정
-            await redis.set(key, 0, ex=REDIS_KEY_TTL)
+            await redis_client.set(key, 0, ex=REDIS_KEY_TTL)
             return 0
             
-    except aioredis.RedisError as e:
+    except redis.RedisError as e:
         logger.error(f"Redis 오류 (좋아요 감소): {str(e)}, post_id={post_id}")
         # Redis 실패 시 백로그에 추가 (음수 값이 될 수 있음)
         return await _add_to_backlog(post_id, -1)
@@ -140,8 +140,8 @@ async def _flush_backlog():
         return
     
     try:
-        redis = await get_redis_client()
-        if redis is None:
+        redis_client = await get_redis_client()
+        if redis_client is None:
             logger.warning("백로그 처리 시도 중 Redis 연결 실패")
             return
             
@@ -155,14 +155,14 @@ async def _flush_backlog():
             key = f"{HEARTS_PREFIX}{post_id}"
             try:
                 # 현재 값 조회
-                current = await redis.get(key)
+                current = await redis_client.get(key)
                 current_val = int(current) if current else 0
                 
                 # 새 값 계산 (음수 안됨)
                 new_val = max(0, current_val + delta)
                 
                 # 값 설정 및 TTL 설정
-                await redis.set(key, new_val, ex=REDIS_KEY_TTL)
+                await redis_client.set(key, new_val, ex=REDIS_KEY_TTL)
             except Exception as e:
                 logger.error(f"개별 좋아요 백로그 처리 실패: {post_id}, {delta}, {str(e)}")
                 # 실패 시 해당 항목만 백로그에 복원
@@ -193,8 +193,8 @@ async def get_hearts(post_id: int) -> int:
     
     try:
         # Redis 클라이언트 가져오기
-        redis = await get_redis_client()
-        if redis is None:
+        redis_client = await get_redis_client()
+        if redis_client is None:
             logger.error(f"Redis 연결 실패: post_id={post_id} 좋아요 조회 요청을 처리할 수 없습니다.")
             # 백로그에 있는 값 확인
             async with _backlog_lock:
@@ -203,7 +203,7 @@ async def get_hearts(post_id: int) -> int:
             return 0
         
         # 좋아요 수 조회
-        hearts = await redis.get(key)
+        hearts = await redis_client.get(key)
         
         # Redis 값 + 백로그 값 (있는 경우)
         result = int(hearts) if hearts else 0
@@ -215,7 +215,7 @@ async def get_hearts(post_id: int) -> int:
                 
         return result
         
-    except aioredis.RedisError as e:
+    except redis.RedisError as e:
         logger.error(f"Redis 오류 (좋아요 조회): {str(e)}, post_id={post_id}")
         # 백로그 값만 반환
         async with _backlog_lock:

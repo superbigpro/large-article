@@ -9,7 +9,7 @@ import time
 from collections import defaultdict
 from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
-import aioredis
+import redis.asyncio as redis  # aioredis 대신 redis-py 사용
 from .client import get_redis_client, VIEWS_PREFIX, REDIS_KEY_TTL
 
 logger = logging.getLogger("redis_views")
@@ -35,18 +35,18 @@ async def increment_views(post_id: int) -> int:
     
     try:
         # Redis 클라이언트 가져오기
-        redis = await get_redis_client()
-        if redis is None:
+        redis_client = await get_redis_client()
+        if redis_client is None:
             # Redis 연결 실패 시 로컬 메모리에 백로그 추가
             logger.warning(f"Redis 연결 실패: post_id={post_id} 조회수 증가 요청을 백로그에 추가합니다.")
             return await _add_to_backlog(post_id)
         
         # 조회수 증가 및 조회
-        current_views = await redis.incr(key)
+        current_views = await redis_client.incr(key)
         
         # TTL 설정 (키가 존재하지 않았을 때만)
         if current_views == 1:
-            await redis.expire(key, REDIS_KEY_TTL)
+            await redis_client.expire(key, REDIS_KEY_TTL)
         
         # 백로그 처리 시도 (주기적으로)
         if time.time() - _last_flush_time > _FLUSH_INTERVAL:
@@ -54,7 +54,7 @@ async def increment_views(post_id: int) -> int:
             
         return current_views
     
-    except aioredis.RedisError as e:
+    except redis.RedisError as e:
         logger.error(f"Redis 오류 (조회수 증가): {str(e)}, post_id={post_id}")
         return await _add_to_backlog(post_id)
     except Exception as e:
@@ -90,8 +90,8 @@ async def _flush_backlog():
         return
     
     try:
-        redis = await get_redis_client()
-        if redis is None:
+        redis_client = await get_redis_client()
+        if redis_client is None:
             logger.warning("백로그 처리 시도 중 Redis 연결 실패")
             return
             
@@ -101,7 +101,7 @@ async def _flush_backlog():
             _views_backlog.clear()
         
         # Redis 파이프라인으로 일괄 처리
-        pipeline = redis.pipeline()
+        pipeline = redis_client.pipeline()
         for post_id, increment in backlog_copy.items():
             key = f"{VIEWS_PREFIX}{post_id}"
             # 현재 값에 백로그 값을 더함
@@ -135,8 +135,8 @@ async def get_views(post_id: int) -> int:
     
     try:
         # Redis 클라이언트 가져오기
-        redis = await get_redis_client()
-        if redis is None:
+        redis_client = await get_redis_client()
+        if redis_client is None:
             logger.error(f"Redis 연결 실패: post_id={post_id} 조회수 조회 요청을 처리할 수 없습니다.")
             # 백로그에 있는 값 확인
             async with _backlog_lock:
@@ -145,7 +145,7 @@ async def get_views(post_id: int) -> int:
             return 0
         
         # 조회수 조회
-        views = await redis.get(key)
+        views = await redis_client.get(key)
         
         # Redis 값 + 백로그 값 (있는 경우)
         result = int(views) if views else 0
@@ -155,7 +155,7 @@ async def get_views(post_id: int) -> int:
                 
         return result
     
-    except aioredis.RedisError as e:
+    except redis.RedisError as e:
         logger.error(f"Redis 오류 (조회수 조회): {str(e)}, post_id={post_id}")
         # 백로그 값만 반환
         async with _backlog_lock:

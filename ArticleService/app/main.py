@@ -8,6 +8,8 @@ import sys
 import logging
 from batch_update import start_batch_update, stop_batch_update
 from libs.redis import close_redis_connection, force_flush_backlogs
+import os
+from rpc.main import gRPCServer
 
 # 로깅 설정
 logging.basicConfig(level=logging.INFO)
@@ -27,6 +29,9 @@ app.add_middleware(
 async def create_tables():
     async with async_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+async def start_grpc_server():
+    await gRPCServer.run()
 
 # 애플리케이션 시작 시 실행
 @app.on_event("startup")
@@ -59,5 +64,9 @@ async def shutdown_event():
 include_router(app)
 
 if __name__ == "__main__":
+    asyncio.create_task(start_grpc_server())
+    
+    http_port = int(os.getenv("HTTP_PORT", 50002))
+    
     import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    uvicorn.run("main:app", host="0.0.0.0", port=http_port, reload=False)

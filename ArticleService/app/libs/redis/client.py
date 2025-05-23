@@ -6,7 +6,7 @@ Redis 클라이언트 모듈
 """
 import asyncio
 import logging
-import aioredis
+import redis.asyncio as redis 
 import os
 from typing import Optional
 from dotenv import load_dotenv
@@ -29,18 +29,18 @@ HEARTS_PREFIX = "hearts:"
 
 UPDATE_INTERVAL = int(os.getenv("REDIS_UPDATE_INTERVAL", 60))
 
-redis_client: Optional[aioredis.Redis] = None
-pool: Optional[aioredis.ConnectionPool] = None
+redis_client: Optional[redis.Redis] = None
+pool: Optional[redis.ConnectionPool] = None
 # Redis 연결 상태
 _is_connected = False
 
-async def get_redis_client() -> aioredis.Redis:
+async def get_redis_client() -> redis.Redis:
     """
     Redis 클라이언트 인스턴스를 반환합니다.
     연결이 없으면 새로 생성하고, 실패 시 재시도합니다.
     
     Returns:
-        aioredis.Redis: Redis 클라이언트 인스턴스
+        redis.Redis: Redis 클라이언트 인스턴스
     """
     global redis_client, pool, _is_connected
     
@@ -51,20 +51,20 @@ async def get_redis_client() -> aioredis.Redis:
     while retry_count < REDIS_CONNECTION_RETRY:
         try:
             if pool is None:
-                pool = aioredis.ConnectionPool.from_url(
+                pool = redis.ConnectionPool.from_url(
                     f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_DB}",
                     max_connections=REDIS_POOL_SIZE,
                     decode_responses=True
                 )
             
-            redis_client = aioredis.Redis(connection_pool=pool)
+            redis_client = redis.Redis(connection_pool=pool)
 
             await redis_client.ping()
             _is_connected = True
             logger.info(f"Redis 서버({REDIS_HOST}:{REDIS_PORT})에 연결되었습니다.")
             return redis_client
         
-        except (aioredis.RedisError, ConnectionError, asyncio.TimeoutError) as e:
+        except (redis.RedisError, ConnectionError, asyncio.TimeoutError) as e:
             retry_count += 1
             wait_time = min(2 ** retry_count, REDIS_CONNECTION_TIMEOUT)
             logger.warning(f"Redis 연결 실패 ({retry_count}/{REDIS_CONNECTION_RETRY}): {str(e)}. {wait_time}초 후 재시도...")
